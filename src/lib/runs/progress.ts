@@ -10,4 +10,7 @@ export function countProgress(tasks: readonly TaskLike[]) {
   return { done: tasks.filter((t) => t.status === "done").length, total: tasks.length };
 }
 
-export const formatProgress = ({ done, total }: { done: number; total: number }) => `${done} of ${total} done`;
+/** AC-VENDOR-05: прогрес підрядника — лише його задачі. */
+export const formatVendorProgress = (done: number, total: number) => `Your tasks: ${done} of ${total} done`;
+
+export const formatProgress =({ done, total }: { done: number; total: number }) => `${done} of ${total} done`;
