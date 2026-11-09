@@ -261,6 +261,10 @@ export type Database = {
         Args: { p_name: string; p_required: boolean; p_section_id: string; p_template_id: string };
         Returns: string;
       };
+      vendor_runs: {
+        Args: { p_run_id?: string | null };
+        Returns: { id: string; case_name: string; status: string; created_at: string; done: number; total: number }[];
+      };
       complete_task: {
         Args: { p_task_id: string; p_confirmed?: boolean };
         Returns: { task_status: string; run_status: string }[];
