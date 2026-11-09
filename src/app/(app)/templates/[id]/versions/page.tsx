@@ -4,7 +4,7 @@ import { buttonVariants } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PencilIcon } from "@/components/ui/icons";
 import { StatusBadge } from "@/components/ui/status-badge";
-import { canManageTemplates, requireViewer } from "@/lib/supabase/viewer";
+import { canManageTemplates, isVendor, requireViewer } from "@/lib/supabase/viewer";
 import { findTemplateDraft } from "@/lib/templates/current";
 import { versionList } from "@/lib/templates/editor";
 import { Forbidden } from "@/app/_components/forbidden";
@@ -19,6 +19,7 @@ export const metadata = { title: "Versions" };
 
 export default async function TemplateVersionsPage({ params }: PageProps<"/templates/[id]/versions">) {
   const [{ id }, { supabase, viewer }] = await Promise.all([params, requireViewer()]);
+  if (isVendor(viewer.role)) return <Forbidden title="Versions" back={{ href: "/runs", label: "Back to runs" }} />;
   if (!canManageTemplates(viewer.role)) return <Forbidden title="Versions" />;
 
   const template = await findTemplateDraft(supabase, id);
