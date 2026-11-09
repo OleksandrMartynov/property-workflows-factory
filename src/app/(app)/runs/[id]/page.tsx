@@ -2,13 +2,12 @@ import { notFound } from "next/navigation";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { runStatusLabel, runStatusTone } from "@/lib/runs/labels";
 import { errorMessage } from "@/lib/runs/messages";
-import { isLastRequiredTask } from "@/lib/runs/confirmation";
 import { isVendor, requireViewer } from "@/lib/supabase/viewer";
 import { Notice, PageShell } from "@/app/_components/ui";
 import { completeTask } from "../actions";
 import { RunDetail } from "./_components/run-detail";
 import { VendorRunDetail } from "./_components/vendor-run-detail";
-import { loadVendorRun } from "./_lib/vendor-run";
+import { loadLastRequiredTaskId, loadVendorRun } from "./_lib/vendor-run";
 
 // Сторінка запуску: AC-RUN-02, AC-RUN-12 (задачі й секції — копія на момент запуску), AC-RUN-04…09 (менеджер запуску й
 // виконавці), AC-TASK-05 (прогрес «N of M done»), AC-TASK-08 (статус кожної задачі), AC-TASK-01…03, 07, 18 (позначка
@@ -23,7 +22,7 @@ export default async function RunPage({ params, searchParams }: PageProps<"/runs
     const vendorRun = await loadVendorRun(supabase, id);
     if (!vendorRun || vendorRun.tasks.length === 0) notFound();
     const { run, tasks: ownTasks } = vendorRun;
-    const lastRequired = ownTasks.find((t) => isLastRequiredTask(t, ownTasks));
+    const lastRequiredTaskId = await loadLastRequiredTaskId(supabase, id);
     const vendorMessage = errorMessage(error);
     return (
       <PageShell
@@ -32,7 +31,7 @@ export default async function RunPage({ params, searchParams }: PageProps<"/runs
         actions={<StatusBadge status={runStatusTone(run.status)}>{runStatusLabel(run.status)}</StatusBadge>}
       >
         {vendorMessage ? <Notice kind="error">{vendorMessage}</Notice> : null}
-        <VendorRunDetail run={run} tasks={ownTasks} lastRequiredTaskId={lastRequired?.id ?? null} completeTask={completeTask} />
+        <VendorRunDetail run={run} tasks={ownTasks} lastRequiredTaskId={lastRequiredTaskId} completeTask={completeTask} />
       </PageShell>
     );
   }
