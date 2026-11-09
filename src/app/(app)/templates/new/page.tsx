@@ -5,7 +5,7 @@ import { Field } from "@/components/ui/field";
 import { TemplateIcon } from "@/components/ui/icons";
 import { Input } from "@/components/ui/input";
 import { errorMessage } from "@/lib/runs/messages";
-import { canManageTemplates, requireViewer } from "@/lib/supabase/viewer";
+import { canManageTemplates, isVendor, requireViewer } from "@/lib/supabase/viewer";
 import { Forbidden } from "@/app/_components/forbidden";
 import { SubmitButton } from "@/app/_components/submit-button";
 import { PageShell } from "@/app/_components/ui";
@@ -17,6 +17,7 @@ export const metadata = { title: "New template" };
 
 export default async function NewTemplatePage({ searchParams }: PageProps<"/templates/new">) {
   const [{ viewer }, { error }] = await Promise.all([requireViewer(), searchParams]);
+  if (isVendor(viewer.role)) return <Forbidden title="New template" back={{ href: "/runs", label: "Back to runs" }} />;
   if (!canManageTemplates(viewer.role)) return <Forbidden title="New template" />;
   const message = errorMessage(error);
 

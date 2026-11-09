@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { errorMessage } from "@/lib/runs/messages";
-import { canManageTemplates, requireViewer } from "@/lib/supabase/viewer";
+import { canManageTemplates, isVendor, requireViewer } from "@/lib/supabase/viewer";
 import { loadCurrentVersions, loadVersionTasks } from "@/lib/templates/current";
 import { Forbidden } from "@/app/_components/forbidden";
 import { EditorView } from "./_components/editor-view";
@@ -15,6 +15,7 @@ export default async function EditTemplatePage({ params, searchParams }: PagePro
   const [{ id }, { error, saved, view }] = await Promise.all([params, searchParams]);
   const { supabase, viewer } = await requireViewer();
   // Перевірка ролі — до будь-якого запиту незбережених змін.
+  if (isVendor(viewer.role)) return <Forbidden title="Edit template" back={{ href: "/runs", label: "Back to runs" }} />;
   if (!canManageTemplates(viewer.role)) return <Forbidden title="Edit template" />;
 
   const { data: drafts, error: draftsError } = await supabase.rpc("list_template_drafts");
