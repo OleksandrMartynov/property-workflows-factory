@@ -96,6 +96,8 @@ export async function attachRuntimeErrors(page: Page) {
  * і пароль потрапив би у звіт і трасу.
  * Локатори — форма /login шаблону курсу (поля «Email» і «Пароль», кнопка «Увійти») і перехід на «/» після входу.
  * Ваша форма чи сторінка після входу інші — змініть їх тут.
+ * Після входу — будь-яка сторінка застосунку, крім /login: підрядника головна веде одразу на /runs
+ * (openspec/changes/impl-vendor/design.md), тож «/» він може й не побачити.
  */
 export async function signIn(page: Page, email: string, password: string) {
   await page.goto("/login");
@@ -104,5 +106,5 @@ export async function signIn(page: Page, email: string, password: string) {
     (el as HTMLInputElement).value = value;
   }, password);
   await page.getByRole("button", { name: "Sign in" }).click();
-  await page.waitForURL((url) => url.pathname === "/");
+  await page.waitForURL((url) => url.pathname !== "/login");
 }
