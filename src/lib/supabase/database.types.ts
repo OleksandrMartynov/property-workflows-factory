@@ -265,6 +265,10 @@ export type Database = {
         Args: { p_run_id?: string | null };
         Returns: { id: string; case_name: string; status: string; created_at: string; done: number; total: number }[];
       };
+      run_last_required_task: {
+        Args: { p_run_id: string };
+        Returns: string;
+      };
       complete_task: {
         Args: { p_task_id: string; p_confirmed?: boolean };
         Returns: { task_status: string; run_status: string }[];

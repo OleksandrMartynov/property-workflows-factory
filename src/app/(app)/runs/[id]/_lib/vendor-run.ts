@@ -2,6 +2,13 @@ import type { createClient } from "@/lib/supabase/server";
 
 type Supabase = Awaited<ReturnType<typeof createClient>>;
 
+/** Id останньої обов'язкової задачі запуску — за всіма задачами запуску (функція в базі), а не лише за власними. */
+export async function loadLastRequiredTaskId(supabase: Supabase, runId: string): Promise<string | null> {
+  const { data, error } = await supabase.rpc("run_last_required_task", { p_run_id: runId });
+  if (error) throw error;
+  return data ?? null;
+}
+
 /**
  * Запуск підрядника (AC-VENDOR-04, AC-VENDOR-06): рядок запуску з public.vendor_runs (таблиця runs не читається), задачі —
  * з run_tasks (RLS віддає лише його). Запуск без його задач — null.
