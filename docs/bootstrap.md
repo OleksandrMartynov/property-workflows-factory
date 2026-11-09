@@ -11,7 +11,7 @@
 Docker не потрібен: локально — лише npm run dev проти вашої бази; міграції на одноразовій базі перевіряє CI (db-check).
 -->
 
-Моє репо: [це репо](../../..) · Прод-URL: https://property-workflows-rho.vercel.app
+Моє репо: [це репо](../../..) · Прод-URL: https://2026-quitcode-09-software-factory-h.vercel.app (двійник; основний прод — https://property-workflows-rho.vercel.app)
 Репо вимог PM: https://github.com/solomchaak/property-workflows-spec · Організація Supabase: Property Workflows
 
 ## 1. Інструменти й репо

@@ -1,4 +1,9 @@
-Прод: https://property-workflows-rho.vercel.app
+Двійник для фабрики (бонус WS9); прод — окремий.
+
+- Прод двійника: https://2026-quitcode-09-software-factory-h.vercel.app (`/api/health`)
+- Основне репо: https://github.com/OleksandrMartynov/property-workflows (прод https://property-workflows-rho.vercel.app)
+- База: `main` = тег `ws9-base` + інфраструктура UAT; зріз 3 (AC-VENDOR-01…10) будує фабрика з тих самих AC PM.
+- Власні Supabase і Vercel; автозлиття PR фабрики після required checks `spec`, `app`, `conformance`, `db-check`.
 
 # Шаблон проєкту розробника: Next.js + Supabase + OpenSpec
 
