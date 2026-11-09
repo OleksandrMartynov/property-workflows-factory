@@ -99,6 +99,25 @@ export async function createTestDb(): Promise<TestDb> {
   };
 }
 
+/**
+ * Додатковий користувач поза supabase/demo-users.json — так само, як create-demo-users.mjs: користувач Auth → тригер
+ * створює профіль → service_role ставить роль. Роль — рядок SQL (напр. 'vendor'): чи допускає її profiles_role_check,
+ * вирішує база, а не тип TS. Повертає id.
+ */
+export async function addUser(t: TestDb, email: string, role: string): Promise<string> {
+  const id = crypto.randomUUID();
+  await t.db.exec("begin; set local role supabase_auth_admin;");
+  try {
+    await t.db.query("insert into auth.users (id, email, raw_user_meta_data) values ($1, $2, $3)", [id, email, {}]);
+    await t.db.exec("commit");
+  } catch (error) {
+    await t.db.exec("rollback").catch(() => {});
+    throw error;
+  }
+  await t.asService("update public.profiles set role = $2 where id = $1", [id, role]);
+  return id;
+}
+
 /** Шаблон «Tenant move-in» з міграції 20261019174350_run_launch.sql: 2 секції, 5 задач, 3 обов'язкові. */
 export const TENANT_MOVE_IN = {
   id: "10000000-0000-0000-0000-000000000001",

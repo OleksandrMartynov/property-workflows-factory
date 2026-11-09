@@ -8,6 +8,8 @@
   // і кожен прогін друкує WARN.
   "entry": [
     "vitest.stryker.config.mts",
+    // Адаптер фабрики (бонус WS9): TAP по AC ID для воріт visible-tests; запускається руками й фабрикою.
+    "scripts/factory-tap.mjs",
     // Контролі форм дизайн-системи (DESIGN.md, «Відомі прогалини першої версії»): готові для наступних зрізів (дата, час,
     // число, мультивибір, checkbox, radio, switch, slider, файли), сторінки зрізів 1–3 їх ще не імпортують. Це публічний
     // API бібліотеки src/components/ui, а не мертвий код; date-time.css і dt-shared.tsx досяжні через date-picker.tsx.
