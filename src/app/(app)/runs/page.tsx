@@ -1,10 +1,12 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { buttonVariants } from "@/components/ui/button";
-import { requireViewer } from "@/lib/supabase/viewer";
+import { isVendor, requireViewer } from "@/lib/supabase/viewer";
 import { PageShell } from "@/app/_components/ui";
 import { RunsList } from "./_components/runs-list";
+import { VendorRunsList } from "./_components/vendor-runs-list";
 import { loadRunSummaries } from "./_lib/summaries";
+import { loadVendorRuns } from "./_lib/vendor-runs";
 
 export const metadata = { title: "Runs" };
 
@@ -18,6 +20,14 @@ export default async function RunsPage({ searchParams }: PageProps<"/runs">) {
   const page = Math.max(1, Number.parseInt(typeof rawPage === "string" ? rawPage : "1", 10) || 1);
   const from = (page - 1) * PAGE_SIZE;
   const { supabase, viewer } = await requireViewer();
+
+  if (isVendor(viewer.role)) {
+    return (
+      <PageShell title="Runs">
+        <VendorRunsList runs={await loadVendorRuns(supabase)} />
+      </PageShell>
+    );
+  }
 
   const { data: runs, error: runsError, count } = await supabase
     .from("runs")

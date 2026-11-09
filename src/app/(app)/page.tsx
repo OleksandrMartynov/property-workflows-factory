@@ -1,8 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { buttonVariants } from "@/components/ui/button";
-import { createClient } from "@/lib/supabase/server";
-import { PageShell } from "@/app/_components/ui";
+import { createClient } from "@/lib/supabase/server";import { PageShell } from "@/app/_components/ui";
 import { HomeView } from "@/app/_components/home-view";
 import { loadRunSummaries } from "./runs/_lib/summaries";
 
@@ -25,6 +24,8 @@ export default async function Home() {
     .select("email, full_name, role")
     .eq("id", claims.sub)
     .maybeSingle();
+
+  if (profile?.role === "vendor") redirect("/runs");
 
   const count = { count: "exact", head: true } as const;
   const [active, completed, mine, recent] = await Promise.all([
