@@ -140,30 +140,46 @@ test(
       await expect(page.getByRole("listbox")).toBeVisible();
     });
 
-    await thenStep(
-      page,
-      {
-        clause: "A sees the emails of B, of the administrator and of V, and no names, roles or other profile data.",
-        visible: [
-          `email ${users.B.email} у списку вибору`,
-          `email ${users.ADMIN.email} у списку вибору`,
-          `email ${users.V.email} у списку вибору`,
-        ],
-        hidden: [
-          `немає імен «${users.B.fullName}», «${users.ADMIN.fullName}», «${users.V.fullName}» ніде на сторінці`,
-          "у варіантах B, адміністратора й V немає слів ролей (manager, admin, administrator, vendor)",
-        ],
-      },
-      async () => {
-        const listbox = page.getByRole("listbox");
-        for (const who of [users.B, users.ADMIN, users.V]) {
-          const option = listbox.getByRole("option", { name: who.email });
-          await expect(option).toBeVisible();
-          await expect(option).not.toContainText(/manager|admin|vendor/i);
-        }
-        for (const who of [users.B, users.ADMIN, users.V]) await expect(page.getByText(who.fullName)).toHaveCount(0);
-      },
-    );
+    // Список прокручується: варіанти B, адміністратора й V можуть бути нижче видимої частини. Тож «Тоді» — три кадри,
+    // по одному на кожен email: варіант прокручено в поле зору списку, і його email показано повністю (без трикрапки).
+    const seen = [
+      { who: "B", email: users.B.email },
+      { who: "адміністратора", email: users.ADMIN.email },
+      { who: "V", email: users.V.email },
+    ];
+    for (const { who, email } of seen) {
+      await thenStep(
+        page,
+        {
+          clause: "A sees the emails of B, of the administrator and of V, and no names, roles or other profile data.",
+          visible: [`email ${who} ${email} — повністю, без трикрапки, у видимій частині відкритого списку вибору виконавця`],
+          hidden: [
+            `варіант ${email} у полі зору списку (toBeInViewport), підпис не обрізано (scrollWidth ≤ clientWidth)`,
+            `немає імен «${users.B.fullName}», «${users.ADMIN.fullName}», «${users.V.fullName}» ніде на сторінці`,
+            "у варіантах B, адміністратора й V немає слів ролей (manager, admin, administrator, vendor)",
+          ],
+        },
+        async () => {
+          const listbox = page.getByRole("listbox");
+          await expect(listbox).toBeVisible();
+          const option = listbox.getByRole("option", { name: email });
+          await option.evaluate((el) => el.scrollIntoView({ block: "center", behavior: "instant" }));
+          await expect(option).toBeInViewport({ ratio: 1 });
+          // Підпис варіанта — найменший елемент з текстом email: увесь текст уміщено, нічого не сховано за краєм.
+          const label = option.getByText(email, { exact: true });
+          await expect(label).toBeVisible();
+          const fits = await label.evaluate((el) => ({ scroll: el.scrollWidth, client: el.clientWidth }));
+          expect(fits.scroll, `email ${email} обрізано: scrollWidth ${fits.scroll} > clientWidth ${fits.client}`).toBeLessThanOrEqual(
+            fits.client,
+          );
+
+          for (const other of [users.B, users.ADMIN, users.V]) {
+            await expect(listbox.getByRole("option", { name: other.email })).not.toContainText(/manager|admin|vendor/i);
+            await expect(page.getByText(other.fullName)).toHaveCount(0);
+          }
+        },
+      );
+    }
   },
 );
 
