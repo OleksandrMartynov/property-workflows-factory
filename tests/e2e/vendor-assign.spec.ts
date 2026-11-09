@@ -61,6 +61,14 @@ const runsCount = async () => {
   return count ?? 0;
 };
 
+// /runs має loading.tsx (скелет, role="status"): знімок списку — лише після того, як сторінка домалювалась, інакше кадр і
+// ariaSnapshot ловлять скелет (UAT двійника 2026-11-09, AC-VENDOR-09: FAIL R1 через знімок скелета, а не через запуск).
+async function runsListSettled(page: Page) {
+  const main = page.getByRole("main");
+  await expect(main.getByRole("heading", { level: 1, name: "Runs" })).toBeVisible();
+  await expect(main.getByRole("status")).toHaveCount(0);
+}
+
 const assigneePickers = (page: Page) => page.getByRole("main").getByRole("combobox", { name: /^Assignee of / });
 
 async function chooseAssignee(page: Page, index: number, email: string) {
@@ -196,6 +204,7 @@ test(
       expect(data?.current_version).toBeGreaterThanOrEqual(1);
       await signIn(page, users.V9.email, users.V9.password);
       await page.goto("/runs");
+      await runsListSettled(page);
       listBefore = await page.getByRole("main").ariaSnapshot();
       before = await runsCount();
     });
@@ -232,6 +241,7 @@ test(
       },
       async () => {
         await page.reload();
+        await runsListSettled(page);
         await expect(page.getByRole("main").getByText(CASE_NAME)).toHaveCount(0);
         expect(await page.getByRole("main").ariaSnapshot()).toBe(listBefore);
 

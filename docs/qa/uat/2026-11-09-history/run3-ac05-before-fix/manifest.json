@@ -1,0 +1,51 @@
+{
+  "kind": "uat",
+  "generatedAt": "2026-11-09T19:28:52.483Z",
+  "baseURL": "https://2026-quitcode-09-software-factory-h.vercel.app",
+  "deployedSha": "cf98a78b717ae87029f1cae548d6449795d4b298",
+  "testsCommit": "cf98a78b717ae87029f1cae548d6449795d4b298",
+  "reviewer": {
+    "model": "claude-haiku-5-5",
+    "disputes": "claude-sonnet-5-5"
+  },
+  "note": "Відео й траси не в git (test-results/ локально, артефакт CI). check-recordings конвеєра WS9 вимагає відео на диску — для нього цей manifest треба доповнити.",
+  "results": [
+    {
+      "id": "AC-VENDOR-05",
+      "proof": "AC-VENDOR-05",
+      "title": "AC-VENDOR-05: підрядник V позначає свою задачу 3 «to do» (не остання обов'язкова) у «Apartment 12, move-in» — задача 3 має статус «done», V бачить «Your tasks: 1 of 2 done»",
+      "screenshot": "docs/qa/uat/2026-11-09/frames/AC-VENDOR-05-then-1.png",
+      "video": "test-results/artifacts/vendor-tasks-AC-VENDOR-05--5135a-ть-«Your-tasks-1-of-2-done»-chromium/video.webm",
+      "trace": "test-results/artifacts/vendor-tasks-AC-VENDOR-05--5135a-ть-«Your-tasks-1-of-2-done»-chromium/trace.zip",
+      "asserted": false,
+      "vision": {
+        "met": false,
+        "readable": false,
+        "notes": "На кадрі видно діалог підтвердження «Hand over the keys» з текстом «This cannot be undone» і кнопками Cancel та OK. Під діалогом сторінка запуску «Apartment 12, move-in» розмита, тож рядок «Your tasks» і статус задачі не читаються. Потрібен кадр після натискання OK або чіткий знімок сторінки без діалогу."
+      },
+      "agentModel": "claude-haiku-5-5",
+      "agentVerdicts": {
+        "claude-haiku-5-5": "NEEDS-HUMAN",
+        "claude-sonnet-5-5": null
+      },
+      "escalated": false,
+      "quotesVerified": [],
+      "verdict": "FAIL",
+      "factoryGate": "FAIL",
+      "rule": "R1: перевірка впала — FAIL завжди, агент не перекриває",
+      "playwrightMs": 13289,
+      "reviewCostUsd": 0.05533,
+      "reviewWallMs": 9177
+    }
+  ],
+  "negativeControls": [],
+  "cleanup": {
+    "at": "2026-11-09T19:28:42.407Z",
+    "deleted": [
+      "uat-261109192813-q1@example.test",
+      "uat-261109192813-q2@example.test"
+    ],
+    "remaining": [],
+    "leftoverRequests": 0
+  }
+}
